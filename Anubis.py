@@ -206,13 +206,13 @@ class Window(QMainWindow):
         self.b.reading.connect(reading)
 
         # creating menu items
-        menu = self.menuBar()
+        menubar = self.menuBar()
 
-        # I have three menu items
-        filemenu = menu.addMenu('File')
-        view = menu.addMenu('View')
-        Port = menu.addMenu('Port')
-        Run = menu.addMenu('Run')
+        # I have four menu items
+        filemenu = menubar.addMenu('File')
+        view     = menubar.addMenu('View')
+        Port     = menubar.addMenu('Port')
+        Run      = menubar.addMenu('Run')
 
         # As any PC or laptop have many ports, so I need to list them to the User
         # so I made (Port_Action) to add the Ports got from (serial_ports()) function
@@ -246,7 +246,6 @@ class Window(QMainWindow):
         Open_Action = QAction("Open", self)
         Open_Action.setShortcut("Ctrl+O")
         Open_Action.triggered.connect(self.open)
-
 
         filemenu.addAction(Save_Action)
         filemenu.addAction(Close_Action)
@@ -291,12 +290,9 @@ class Window(QMainWindow):
         self.portNo = action.text()
         self.port_flag = 0
 
-
-
     # I made this function to save the code into a file
     def save(self):
         self.b.reading.emit("name")
-
 
     # I made this function to open a file and exhibits it to the user in a text editor
     def open(self):
