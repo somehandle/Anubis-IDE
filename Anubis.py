@@ -84,8 +84,7 @@ text2 = QTextEdit
 class text_widget(QWidget):
     def __init__(self):
         super().__init__()
-        self.itUI()
-    def itUI(self):
+
         global text
         text = QTextEdit()
         Python_Coloring.PythonHighlighter(text)
@@ -236,11 +235,11 @@ def Openning(s):
 #
 #
 #
-class UI(QMainWindow):
+class Editor(QMainWindow):
     def __init__(self, app):
         super().__init__()
         self.app = app
-        self.intUI()
+        self.initUI()
 
     def switch_theme(self, dark):
         if(dark) :
@@ -253,7 +252,7 @@ class UI(QMainWindow):
         stream = QTextStream(file)
         self.app.setStyleSheet(stream.readAll())
 
-    def intUI(self):
+    def initUI(self):
         self.port_flag = 1
         self.b = Signal()
 
@@ -374,11 +373,9 @@ class UI(QMainWindow):
 ############ end of Class ############
 #
 #
-
-from aoiklivereload import LiveReloader
-
 if __name__ == '__main__':
     app = QApplication(sys.argv)
-    ex = UI(app)
-    # ex = Widget()
+
+    ex = Editor(app)
+
     sys.exit(app.exec_())
