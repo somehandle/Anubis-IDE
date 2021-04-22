@@ -41,11 +41,8 @@ def serial_ports():
     return result
 
 class Signal(QObject):
-
     # initializing a Signal which will take (string) as an input
     reading = pyqtSignal(str)
-
-    # init Function for the Signal class
     def __init__(self):
         QObject.__init__(self)
 
@@ -54,18 +51,23 @@ text = QTextEdit
 text2 = QTextEdit
 
 # this class is made to connect the QTab with the necessary layouts
-class text_widget(QWidget):
+class TextBuffer(QWidget):
     def __init__(self):
         super().__init__()
 
-        global text
-        text = QTextEdit()
-        Python_Coloring.PythonHighlighter(text)
+        # Layout
         hbox = QHBoxLayout()
-        hbox.addWidget(text)
         self.setLayout(hbox)
 
-class Widget(QWidget):
+        # Contents
+        global text
+        text = QTextEdit()
+        hbox.addWidget(text)
+
+        # Extra operations (Syntax Highlighting)
+        Python_Coloring.PythonHighlighter(text)
+
+class Layout(QWidget):
     def __init__(self):
         super().__init__()
         self.initUI()
@@ -73,9 +75,9 @@ class Widget(QWidget):
     def initUI(self):
 
         # This widget is responsible of making Tab in IDE which makes the Text editor looks nice
-        tab = QTabWidget()
-        tx = text_widget()
-        tab.addTab(tx, "Tab"+"1")
+        tabs_list = QTabWidget()
+        new_buffer = TextBuffer()
+        tabs_list.addTab(new_buffer, "Tab"+"1")
 
         # second editor in which the error messeges and succeeded connections will be shown
         global text2
@@ -108,7 +110,7 @@ class Widget(QWidget):
         # after defining variables of type QVBox and QHBox
         # I will Assign treevies variable to the left one and the first text editor in which the code will be written to the right one
         Left_hbox.addWidget(self.treeview)
-        Right_hbox.addWidget(tab)
+        Right_hbox.addWidget(tabs_list)
 
         # defining another variable of type Qwidget to set its layout as an QHBoxLayout
         # I will do the same with the right one
@@ -164,17 +166,17 @@ class Widget(QWidget):
 @pyqtSlot(str)
 def reading(s):
     b = Signal()
-    b.reading.connect(Widget.Saving)
+    b.reading.connect(Layout.Saving)
     b.reading.emit(s)
 
 # same as reading Function
 @pyqtSlot(str)
 def Openning(s):
     b = Signal()
-    b.reading.connect(Widget.Open)
+    b.reading.connect(Layout.Open)
     b.reading.emit(s)
 
-class Editor(QMainWindow):
+class Window(QMainWindow):
     def __init__(self, app):
         super().__init__()
         self.app = app
@@ -262,9 +264,9 @@ class Editor(QMainWindow):
         self.setWindowIcon(QtGui.QIcon('Anubis.png'))
         
 
-        widget = Widget()
+        main_layout = Layout()
 
-        self.setCentralWidget(widget)
+        self.setCentralWidget(main_layout)
         self.show()
 
     ###########################        Start OF the Functions          ##################
@@ -309,5 +311,5 @@ class Editor(QMainWindow):
 
 if __name__ == '__main__':
     app = QApplication(sys.argv)
-    ex = Editor(app)
+    ex = Window(app)
     sys.exit(app.exec_())
