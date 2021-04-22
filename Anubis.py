@@ -378,9 +378,6 @@ class UI(QMainWindow):
 from aoiklivereload import LiveReloader
 
 if __name__ == '__main__':
-    reloader = LiveReloader()
-    reloader.start_watcher_thread()
-
     app = QApplication(sys.argv)
     ex = UI(app)
     # ex = Widget()
