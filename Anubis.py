@@ -2,7 +2,6 @@
 #############      this project is part of my graduation project and it intends to make a fully functioned IDE from scratch    ########
 #############      I've borrowed a function (serial_ports()) from a guy in stack overflow whome I can't remember his name, so I gave hime the copyrights of this function, thank you  ########
 
-
 import sys
 import glob
 import serial
@@ -41,16 +40,6 @@ def serial_ports():
             pass
     return result
 
-
-#
-#
-#
-#
-############ Signal Class ############
-#
-#
-#
-#
 class Signal(QObject):
 
     # initializing a Signal which will take (string) as an input
@@ -60,25 +49,9 @@ class Signal(QObject):
     def __init__(self):
         QObject.__init__(self)
 
-#
-#
-############ end of Class ############
-#
-#
-
 # Making text editor as A global variable (to solve the issue of being local to (self) in widget class)
 text = QTextEdit
 text2 = QTextEdit
-
-#
-#
-#
-#
-############ Text Widget Class ############
-#
-#
-#
-#
 
 # this class is made to connect the QTab with the necessary layouts
 class text_widget(QWidget):
@@ -92,27 +65,7 @@ class text_widget(QWidget):
         hbox.addWidget(text)
         self.setLayout(hbox)
 
-
-
-#
-#
-############ end of Class ############
-#
-#
-
-
-
-#
-#
-#
-#
-############ Widget Class ############
-#
-#
-#
-#
 class Widget(QWidget):
-
     def __init__(self):
         super().__init__()
         self.initUI()
@@ -205,12 +158,6 @@ class Widget(QWidget):
                 data = f.read()
                 text.setText(data)
 
-#
-#
-############ end of Class ############
-#
-#
-
 # defining a new Slot (takes string)
 # Actually I could connect the (mainwindow) class directly to the (widget class) but I've made this function in between for futuer use
 # All what it do is to take the (input string) and establish a connection with the widget class, send the string to it
@@ -226,15 +173,7 @@ def Openning(s):
     b = Signal()
     b.reading.connect(Widget.Open)
     b.reading.emit(s)
-#
-#
-#
-#
-############ MainWindow Class ############
-#
-#
-#
-#
+
 class Editor(QMainWindow):
     def __init__(self, app):
         super().__init__()
@@ -368,14 +307,7 @@ class Editor(QMainWindow):
             self.Open_Signal.reading.emit(data)
 
 
-#
-#
-############ end of Class ############
-#
-#
 if __name__ == '__main__':
     app = QApplication(sys.argv)
-
     ex = Editor(app)
-
     sys.exit(app.exec_())
