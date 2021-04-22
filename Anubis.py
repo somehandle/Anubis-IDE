@@ -237,9 +237,21 @@ def Openning(s):
 #
 #
 class UI(QMainWindow):
-    def __init__(self):
+    def __init__(self, app):
         super().__init__()
+        self.app = app
         self.intUI()
+
+    def switch_theme(self, dark):
+        if(dark) :
+            style = "./editor/colorscheme/dark.qss"
+        else :
+            style = "./editor/colorscheme/light.qss"
+
+        file = QFile(style)
+        file.open(QFile.ReadOnly | QFile.Text)
+        stream = QTextStream(file)
+        self.app.setStyleSheet(stream.readAll())
 
     def intUI(self):
         self.port_flag = 1
@@ -258,6 +270,7 @@ class UI(QMainWindow):
 
         # I have three menu items
         filemenu = menu.addMenu('File')
+        view = menu.addMenu('View')
         Port = menu.addMenu('Port')
         Run = menu.addMenu('Run')
 
@@ -298,6 +311,11 @@ class UI(QMainWindow):
         filemenu.addAction(Save_Action)
         filemenu.addAction(Close_Action)
         filemenu.addAction(Open_Action)
+
+        dark_theme_checkbox = QAction("Dark Theme", self, checkable=True, checked=False)
+        dark_theme_checkbox.triggered.connect(self.switch_theme)
+
+        view.addAction(dark_theme_checkbox)
 
 
         # Seting the window Geometry
@@ -357,8 +375,13 @@ class UI(QMainWindow):
 #
 #
 
+from aoiklivereload import LiveReloader
+
 if __name__ == '__main__':
+    reloader = LiveReloader()
+    reloader.start_watcher_thread()
+
     app = QApplication(sys.argv)
-    ex = UI()
+    ex = UI(app)
     # ex = Widget()
     sys.exit(app.exec_())
