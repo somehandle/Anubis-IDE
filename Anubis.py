@@ -1,6 +1,6 @@
 #############      author => Anubis Graduation Team        ############
-#############      this project is part of my graduation project and it intends to make a fully functioned IDE from scratch    ########
 #############      I've borrowed a function (serial_ports()) from a guy in stack overflow whome I can't remember his name, so I gave hime the copyrights of this function, thank you  ########
+#############      this project is part of my graduation project and it intends to make a fully functioned IDE from scratch    ########
 
 import sys
 import glob
@@ -12,6 +12,11 @@ from PyQt5 import QtGui
 from PyQt5.QtWidgets import *
 from PyQt5.QtCore import *
 from pathlib import Path
+
+# Display to use for the window
+# Only relevent on multi-screen setups
+display_monitor = 0
+
 
 def serial_ports():
     """ Lists serial port names
@@ -256,9 +261,10 @@ class Window(QMainWindow):
 
         view.addAction(dark_theme_checkbox)
 
-
         # Seting the window Geometry
-        self.setGeometry(200, 150, 600, 500)
+        monitor = QDesktopWidget().screenGeometry(display_monitor)
+        self.move(monitor.left(), monitor.top())
+        self.resize(800, 600)
         self.setWindowTitle('Anubis IDE')
         self.setWindowIcon(QtGui.QIcon('Anubis.png'))
         
