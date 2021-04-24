@@ -21,6 +21,32 @@ class Signal(QObject):
     def __init__(self):
         QObject.__init__(self)
 
+App = 0
+class Application(QApplication):
+    def __init__(self, argv):
+        super().__init__(argv)
+        global App 
+        App = self
+        win = Window()
+        sys.exit(self.exec_())
+
+    def setDarkTheme(self):
+        style = "./editor/colorscheme/dark.qss"
+
+        file = QFile(style)
+        file.open(QFile.ReadOnly | QFile.Text)
+        stream = QTextStream(file)
+        self.setStyleSheet(stream.readAll())
+
+    def setLightTheme(self):
+        style = "./editor/colorscheme/light.qss"
+
+        file = QFile(style)
+        file.open(QFile.ReadOnly | QFile.Text)
+        stream = QTextStream(file)
+        self.setStyleSheet(stream.readAll())
+
+
 # Making text editor as A global variable (to solve the issue of being local to (self) in widget class)
 text = QTextEdit
 text2 = QTextEdit
@@ -152,21 +178,15 @@ def Openning(s):
     b.reading.emit(s)
 
 class Window(QMainWindow):
-    def __init__(self, app):
+    def __init__(self):
         super().__init__()
-        self.app = app
         self.initUI()
 
     def switch_theme(self, dark):
         if(dark) :
-            style = "./editor/colorscheme/dark.qss"
+            App.setDarkTheme()
         else :
-            style = "./editor/colorscheme/light.qss"
-
-        file = QFile(style)
-        file.open(QFile.ReadOnly | QFile.Text)
-        stream = QTextStream(file)
-        self.app.setStyleSheet(stream.readAll())
+            App.setLightTheme()
 
     def initUI(self):
         self.port_flag = 1
@@ -210,7 +230,6 @@ class Window(QMainWindow):
 
         dark_theme_checkbox = QAction("Dark Theme", self, checkable=True, checked=False)
         dark_theme_checkbox.triggered.connect(self.switch_theme)
-
         view.addAction(dark_theme_checkbox)
 
         # Seting the window Geometry
@@ -219,7 +238,6 @@ class Window(QMainWindow):
         self.resize(800, 600)
         self.setWindowTitle('Anubis IDE')
         self.setWindowIcon(QtGui.QIcon('Anubis.png'))
-        
 
         main_layout = Layout()
 
@@ -244,8 +262,5 @@ class Window(QMainWindow):
                 data = f.read()
             self.Open_Signal.reading.emit(data)
 
-
 if __name__ == '__main__':
-    app = QApplication(sys.argv)
-    ex = Window(app)
-    sys.exit(app.exec_())
+    Application(sys.argv)
