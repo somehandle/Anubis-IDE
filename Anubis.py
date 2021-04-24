@@ -27,6 +27,7 @@ class Application(QApplication):
         super().__init__(argv)
         global App 
         App = self
+        App.setDarkTheme()
         win = Window()
         sys.exit(self.exec_())
 
@@ -48,12 +49,11 @@ class Application(QApplication):
 
 
 # Making text editor as A global variable (to solve the issue of being local to (self) in widget class)
-text = QTextEdit
 text2 = QTextEdit
 
 # this class is made to connect the QTab with the necessary layouts
 class TextBuffer(QWidget):
-    def __init__(self):
+    def __init__(self, path):
         super().__init__()
 
         # Layout
@@ -61,12 +61,32 @@ class TextBuffer(QWidget):
         self.setLayout(hbox)
 
         # Contents
-        global text
-        text = QTextEdit()
-        hbox.addWidget(text)
+        self.data = QTextEdit()
+        hbox.addWidget(self.data)
 
         # Extra operations (Syntax Highlighting)
-        Python_Coloring.PythonHighlighter(text)
+        Python_Coloring.PythonHighlighter(self.data)
+
+    def setText(self, newText):
+        self.data.setText(newText)
+
+class Editor(QWidget):
+    def __init__(self):
+        super().__init__()
+        self.tabsList = QTabWidget()
+        self.layout = QHBoxLayout()
+        self.layout.addWidget(self.tabsList)
+        self.setLayout(self.layout)
+        self.buffers = {}
+
+    def openBuffer(self, name):
+        self.buffers[name] = TextBuffer(name)
+        self.tabsList.addTab(self.buffers[name], name)
+        self.activeBuffer = self.buffers[name]
+
+    def getActiveBuffer(self):
+        return self.activeBuffer
+
 
 class Layout(QWidget):
     def __init__(self):
@@ -76,9 +96,8 @@ class Layout(QWidget):
     def initUI(self):
 
         # This widget is responsible of making Tab in IDE which makes the Text editor looks nice
-        tabs_list = QTabWidget()
-        new_buffer = TextBuffer()
-        tabs_list.addTab(new_buffer, "Tab"+"1")
+        self.editor = Editor()
+        self.editor.openBuffer('new')
 
         # second editor in which the error messeges and succeeded connections will be shown
         global text2
@@ -106,25 +125,27 @@ class Layout(QWidget):
 
         vbox = QVBoxLayout()
         Left_hbox = QHBoxLayout()
-        Right_hbox = QHBoxLayout()
+        # Right_hbox = QHBoxLayout()
 
         # after defining variables of type QVBox and QHBox
         # I will Assign treevies variable to the left one and the first text editor in which the code will be written to the right one
         Left_hbox.addWidget(self.treeview)
-        Right_hbox.addWidget(tabs_list)
+        # Right_hbox.addWidget(tabs_list)
 
         # defining another variable of type Qwidget to set its layout as an QHBoxLayout
         # I will do the same with the right one
         Left_hbox_Layout = QWidget()
         Left_hbox_Layout.setLayout(Left_hbox)
 
-        Right_hbox_Layout = QWidget()
-        Right_hbox_Layout.setLayout(Right_hbox)
+        # Right_hbox_Layout = QWidget()
+        # Right_hbox_Layout.setLayout(Right_hbox)
 
         # I defined a splitter to seperate the two variables (left, right) and make it more easily to change the space between them
         H_splitter = QSplitter(Qt.Horizontal)
         H_splitter.addWidget(Left_hbox_Layout)
-        H_splitter.addWidget(Right_hbox_Layout)
+        # H_splitter.addWidget(Right_hbox_Layout)
+        H_splitter.addWidget(self.editor)
+
         H_splitter.setStretchFactor(1, 1)
 
         # I defined a new splitter to seperate between the upper and lower sides of the window
@@ -139,16 +160,15 @@ class Layout(QWidget):
 
     # defining a new Slot (takes string) to save the text inside the first text editor
     @pyqtSlot(str)
-    def Saving(s):
+    def Saving(self, s):
         with open('main.py', 'w') as f:
-            TEXT = text.toPlainText()
+            TEXT = self.editor.getActiveBuffer().toPlainText()
             f.write(TEXT)
 
     # defining a new Slot (takes string) to set the string to the text editor
     @pyqtSlot(str)
-    def Open(s):
-        global text
-        text.setText(s)
+    def Open(self, s):
+        self.editor.getActiveBuffer().setText(s)
 
     def on_clicked(self, index):
 
@@ -159,7 +179,7 @@ class Layout(QWidget):
             f = open(nn[0],'r')
             with f:
                 data = f.read()
-                text.setText(data)
+                self.editor.getActiveBuffer().setText(data)
 
 # defining a new Slot (takes string)
 # Actually I could connect the (mainwindow) class directly to the (widget class) but I've made this function in between for futuer use
@@ -189,7 +209,6 @@ class Window(QMainWindow):
             App.setLightTheme()
 
     def initUI(self):
-        self.port_flag = 1
         self.b = Signal()
 
         self.Open_Signal = Signal()
@@ -203,7 +222,7 @@ class Window(QMainWindow):
         # creating menu items
         menubar = self.menuBar()
 
-        # I have four menu items
+        # I have three menu items
         filemenu = menubar.addMenu('File')
         view     = menubar.addMenu('View')
         Run      = menubar.addMenu('Run')
@@ -228,7 +247,7 @@ class Window(QMainWindow):
         filemenu.addAction(Close_Action)
         filemenu.addAction(Open_Action)
 
-        dark_theme_checkbox = QAction("Dark Theme", self, checkable=True, checked=False)
+        dark_theme_checkbox = QAction("Dark Theme", self, checkable=True, checked=True)
         dark_theme_checkbox.triggered.connect(self.switch_theme)
         view.addAction(dark_theme_checkbox)
 
