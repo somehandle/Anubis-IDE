@@ -26,26 +26,27 @@ def format(color, style=''):
 # Syntax styles that can be shared by all languages
 
 STYLES2 = {
-    'keyword': format([200, 120, 50], 'bold'),
+    'keyword' : format([200, 120, 50], 'bold'),
     'operator': format([150, 150, 150]),
-    'brace': format('darkGray'),
+    'brace'   : format('darkGray'),
     'defclass': format([220, 220, 255], 'bold'),
-    'string': format([20, 110, 100]),
-    'string2': format([30, 120, 110]),
-    'comment': format([128, 128, 128]),
-    'self': format([150, 85, 140], 'italic'),
-    'numbers': format([100, 150, 190]),
+    'string'  : format([20, 110, 100]),
+    'string2' : format([30, 120, 110]),
+    'comment' : format([128, 128, 128]),
+    'self'    : format([150, 85, 140], 'italic'),
+    'numbers' : format([100, 150, 190]),
 }
+
 STYLES = {
-       'keyword': format('blue'),
-      'operator': format('red'),
-       'brace': format('darkGray'),
+       'keyword' : format('blue'),
+       'operator': format('red'),
+       'brace'   : format('darkGray'),
        'defclass': format('black', 'bold'),
-       'string': format('magenta'),
-       'string2': format('darkMagenta'),
-       'comment': format('darkGreen', 'italic'),
-       'self': format('black', 'italic'),
-       'numbers': format('brown'),
+       'string'  : format('magenta'),
+       'string2' : format('darkMagenta'),
+       'comment' : format('darkGreen', 'italic'),
+       'self'    : format('black', 'italic'),
+       'numbers' : format('brown'),
    }
 
 class PythonHighlighter(QSyntaxHighlighter):
@@ -55,25 +56,25 @@ class PythonHighlighter(QSyntaxHighlighter):
 
 
     keywords = [
-        'and', 'assert', 'break', 'class', 'continue', 'def',
-        'del', 'elif', 'else', 'except', 'exec', 'finally',
-        'for', 'from', 'global', 'if', 'import', 'in',
-        'is', 'lambda', 'not', 'or', 'pass', 'print',
-        'raise', 'return', 'try', 'while', 'yield',
-        'None', 'True', 'False',
+        'and'  , 'assert', 'break' , 'class' , 'continue', 'def'    ,
+        'del'  , 'elif'  , 'else'  , 'except', 'exec'    , 'finally',
+        'for'  , 'from'  , 'global', 'if'    , 'import'  , 'in'     ,
+        'is'   , 'lambda', 'not'   , 'or'    , 'pass'    , 'print'  ,
+        'raise', 'return', 'try'   , 'while' , 'yield'   ,
+        'None' , 'True'  , 'False' ,
     ]
 
     # Python operators
     operators = [
-        '=',
+        '='  ,
         # Comparison
-        '==', '!=', '<', '<=', '>', '>=',
+        '==' , '!=', '<'  , '<=', '>'  , '>=',
         # Arithmetic
-        '\+', '-', '\*', '/', '//', '\%', '\*\*',
+        '\+' , '-' , '\*' , '/' , '//' , '\%', '\*\*',
         # In-place
         '\+=', '-=', '\*=', '/=', '\%=',
         # Bitwise
-        '\^', '\|', '\&', '\~', '>>', '<<',
+        '\^' , '\|', '\&' , '\~', '>>' , '<<',
     ]
 
     # Python braces
