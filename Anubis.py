@@ -1,10 +1,8 @@
 #############      author => Anubis Graduation Team        ############
-#############      I've borrowed a function (serial_ports()) from a guy in stack overflow whome I can't remember his name, so I gave hime the copyrights of this function, thank you  ########
 #############      this project is part of my graduation project and it intends to make a fully functioned IDE from scratch    ########
 
 import sys
 import glob
-import serial
 
 import Python_Coloring
 from PyQt5 import QtCore
@@ -16,34 +14,6 @@ from pathlib import Path
 # Display to use for the window
 # Only relevent on multi-screen setups
 display_monitor = 0
-
-
-def serial_ports():
-    """ Lists serial port names
-        :raises EnvironmentError:
-            On unsupported or unknown platforms
-        :returns:
-            A list of the serial ports available on the system
-    """
-    if sys.platform.startswith('win'):
-        ports = ['COM%s' % (i + 1) for i in range(256)]
-    elif sys.platform.startswith('linux') or sys.platform.startswith('cygwin'):
-        # this excludes your current terminal "/dev/tty"
-        ports = glob.glob('/dev/tty[A-Za-z]*')
-    elif sys.platform.startswith('darwin'):
-        ports = glob.glob('/dev/tty.*')
-    else:
-        raise EnvironmentError('Unsupported platform')
-
-    result = []
-    for port in ports:
-        try:
-            s = serial.Serial(port)
-            s.close()
-            result.append(port)
-        except (OSError, serial.SerialException):
-            pass
-    return result
 
 class Signal(QObject):
     # initializing a Signal which will take (string) as an input
@@ -216,25 +186,7 @@ class Window(QMainWindow):
         # I have four menu items
         filemenu = menubar.addMenu('File')
         view     = menubar.addMenu('View')
-        Port     = menubar.addMenu('Port')
         Run      = menubar.addMenu('Run')
-
-        # As any PC or laptop have many ports, so I need to list them to the User
-        # so I made (Port_Action) to add the Ports got from (serial_ports()) function
-        # copyrights of serial_ports() function goes back to a guy from stackoverflow(whome I can't remember his name), so thank you (unknown)
-        Port_Action = QMenu('port', self)
-
-        res = serial_ports()
-
-        for i in range(len(res)):
-            s = res[i]
-            Port_Action.addAction(s, self.PortClicked)
-
-        # adding the menu which I made to the original (Port menu)
-        Port.addMenu(Port_Action)
-
-#        Port_Action.triggered.connect(self.Port)
-#        Port.addAction(Port_Action)
 
         # Making and adding Run Actions
         RunAction = QAction("Run", self)
@@ -276,25 +228,7 @@ class Window(QMainWindow):
 
     ###########################        Start OF the Functions          ##################
     def Run(self):
-        if self.port_flag == 0:
-            mytext = text.toPlainText()
-        #
-        ##### Compiler Part
-        #
-#            ide.create_file(mytext)
-#            ide.upload_file(self.portNo)
-            text2.append("Sorry, there is no attached compiler.")
-
-        else:
-            text2.append("Please Select Your Port Number First")
-
-
-    # this function is made to get which port was selected by the user
-    @QtCore.pyqtSlot()
-    def PortClicked(self):
-        action = self.sender()
-        self.portNo = action.text()
-        self.port_flag = 0
+        pass
 
     # I made this function to save the code into a file
     def save(self):
