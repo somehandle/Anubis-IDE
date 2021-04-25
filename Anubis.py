@@ -84,6 +84,8 @@ class Editor(QWidget):
         self.buffers = {}
 
     def openBuffer(self, name, path):
+        if name in self.buffers:
+            return
         self.buffers[name] = TextBuffer(path)
         self.tabsList.addTab(self.buffers[name], name)
         self.activeBuffer = self.buffers[name]
