@@ -64,6 +64,10 @@ class TextBuffer(QWidget):
         self.data = QTextEdit()
         hbox.addWidget(self.data)
 
+        # Open file
+        f = open(path, 'r')
+        self.setText(f.read())
+
         # Extra operations (Syntax Highlighting)
         Python_Coloring.PythonHighlighter(self.data)
 
@@ -79,8 +83,8 @@ class Editor(QWidget):
         self.setLayout(self.layout)
         self.buffers = {}
 
-    def openBuffer(self, name):
-        self.buffers[name] = TextBuffer(name)
+    def openBuffer(self, name, path):
+        self.buffers[name] = TextBuffer(path)
         self.tabsList.addTab(self.buffers[name], name)
         self.activeBuffer = self.buffers[name]
 
@@ -97,7 +101,6 @@ class Layout(QWidget):
 
         # This widget is responsible of making Tab in IDE which makes the Text editor looks nice
         self.editor = Editor()
-        self.editor.openBuffer('new')
 
         # second editor in which the error messeges and succeeded connections will be shown
         global text2
@@ -176,10 +179,13 @@ class Layout(QWidget):
         nn = tuple([nn])
 
         if nn[0]:
-            f = open(nn[0],'r')
-            with f:
-                data = f.read()
-                self.editor.getActiveBuffer().setText(data)
+            name = nn[0]
+            path = nn[0]
+            self.editor.openBuffer(name, path)
+            # f = open(nn[0],'r')
+            # with f:
+            #     data = f.read()
+            #     self.editor.getActiveBuffer().setText(data)
 
 # defining a new Slot (takes string)
 # Actually I could connect the (mainwindow) class directly to the (widget class) but I've made this function in between for futuer use
