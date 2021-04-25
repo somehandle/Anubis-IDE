@@ -53,8 +53,10 @@ text2 = QTextEdit
 
 # this class is made to connect the QTab with the necessary layouts
 class TextBuffer(QWidget):
-    def __init__(self, path):
+    def __init__(self, name, path):
         super().__init__()
+
+        self.name = name
 
         # Layout
         hbox = QHBoxLayout()
@@ -78,6 +80,8 @@ class Editor(QWidget):
     def __init__(self):
         super().__init__()
         self.tabsList = QTabWidget()
+        self.tabsList.setTabsClosable(True)
+        self.tabsList.tabCloseRequested.connect(self.closeBuffer)
         self.layout = QHBoxLayout()
         self.layout.addWidget(self.tabsList)
         self.setLayout(self.layout)
@@ -88,11 +92,17 @@ class Editor(QWidget):
             self.activeBuffer = self.buffers[name]
             self.tabsList.setCurrentIndex(self.activeBuffer.index)
             return
-        self.buffers[name] = TextBuffer(path)
+        self.buffers[name] = TextBuffer(name, path)
         self.buffers[name].index = self.buffers.__len__() - 1
         self.tabsList.addTab(self.buffers[name], name)
         self.activeBuffer = self.buffers[name]
         self.tabsList.setCurrentIndex(self.activeBuffer.index)
+
+    def closeBuffer(self, closingIndex):
+        buffer = self.tabsList.widget(closingIndex)
+        buffer.deleteLater()
+        self.tabsList.removeTab(closingIndex)
+        self.buffers.__delitem__(buffer.name)
 
     def getActiveBuffer(self):
         return self.activeBuffer
