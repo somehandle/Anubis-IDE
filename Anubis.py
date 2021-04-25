@@ -3,6 +3,7 @@
 
 import sys
 import glob
+import subprocess
 
 import Python_Coloring
 from PyQt5 import QtCore
@@ -280,13 +281,16 @@ class Window(QMainWindow):
         self.setWindowTitle('Anubis IDE')
         self.setWindowIcon(QtGui.QIcon('Anubis.png'))
 
-        main_layout = Layout()
+        self.main_layout = Layout()
 
-        self.setCentralWidget(main_layout)
+        self.setCentralWidget(self.main_layout)
         self.show()
 
     ###########################        Start OF the Functions          ##################
     def Run(self):
+        process = subprocess.Popen(['python3', self.main_layout.editor.getActiveBuffer().name], stdout=subprocess.PIPE, stderr=subprocess.PIPE)
+        stdout, stderr = process.communicate()
+        text2.setText(stderr.decode('utf-8'))
         pass
 
     # I made this function to save the code into a file
