@@ -6,6 +6,8 @@ import glob
 import subprocess
 
 import Python_Coloring
+import CS_SyntaxHighlighting
+
 from PyQt5 import QtCore
 from PyQt5 import QtGui
 from PyQt5.QtWidgets import *
@@ -57,6 +59,7 @@ class TextBuffer(QWidget):
     def __init__(self, name, path):
         super().__init__()
 
+        self.runnable = False
         self.name = name
 
         # Layout
@@ -72,7 +75,11 @@ class TextBuffer(QWidget):
         self.setText(f.read())
 
         # Extra operations (Syntax Highlighting)
-        Python_Coloring.PythonHighlighter(self.data)
+        if(path.lower().endswith('.py')):
+            Python_Coloring.PythonHighlighter(self.data)
+            self.runnable = True
+        elif(path.lower().endswith('.cs')):
+            CS_SyntaxHighlighting.CSHighlighter(self.data)
 
     def setText(self, newText):
         self.data.setText(newText)
@@ -288,10 +295,13 @@ class Window(QMainWindow):
 
     ###########################        Start OF the Functions          ##################
     def Run(self):
-        process = subprocess.Popen(['python3', self.main_layout.editor.getActiveBuffer().name], stdout=subprocess.PIPE, stderr=subprocess.PIPE)
-        stdout, stderr = process.communicate()
-        text2.setText(stderr.decode('utf-8'))
-        pass
+        if(self.main_layout.editor.getActiveBuffer().runnable):
+            process = subprocess.Popen(['python3', self.main_layout.editor.getActiveBuffer().name], stdout=subprocess.PIPE, stderr=subprocess.PIPE)
+            stdout, stderr = process.communicate()
+            text2.setText(stderr.decode('utf-8'))
+        else:
+            text2.setText('Cannot run non-python files')
+
 
     # I made this function to save the code into a file
     def save(self):
